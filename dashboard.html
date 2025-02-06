@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Story Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ student.name }}!</h1>
+    <div class="controls">
+        <form action="/create_story" method="POST">
+            <input type="number" name="word_count" min="40" max="200" value="100" required>
+            <input type="text" name="theme" placeholder="Story theme" required>
+            <button type="submit">Create New Story</button>
+        </form>
+        
+        <h2>Previous Stories (Last 5)</h2>
+        <div class="story-list">
+            {% for story in student.stories[-5:] %}
+            <a href="{{ url_for('view_story', story_id=loop.index + (student.stories|length - 5) -1) }}">
+                {{ story.title }} - {{ story.date }}
+            </a>
+            {% else %}
+            <p>No stories yet!</p>
+            {% endfor %}
+        </div>
+    </div>
+    <a href="/logout" class="logout">Log Out</a>
+</body>
+</html>

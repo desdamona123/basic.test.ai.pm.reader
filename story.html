@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+    <title>{{ story.title }}</title>
+</head>
+<body>
+    <div class="story-output">
+        <h2>{{ story.title }}</h2>
+        <pre>{{ story.content }}</pre>
+    </div>
+    <div class="controls">
+        <button onclick="window.history.back()">Back</button>
+        <button onclick="window.print()">Print Story</button>
+    </div>
+</body>
+</html>
