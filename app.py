@@ -1,8 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import json
-import os
-import requests
-from datetime import datetime
+import json  # Used for handling data storage
+import os  # Standard library imports (used for environment variables, file paths)
+import requests  # Used for making API calls
+from datetime import datetime  # Used for handling date formatting
+
+# Step 1: Import dotenv and load environment variables
+from dotenv import load_dotenv  
+load_dotenv()  # Automatically finds .env in the root directory
+
+# Step 2: Retrieve your API key
+API_KEY = os.getenv("DEEPINFRA_TOKEN")  # Get the API key securely
+
+print("DEBUG: API_KEY =", API_KEY)  # Prints the API key when app.py starts
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Required for session management
@@ -18,12 +27,12 @@ def load_data():
 # Save user data to JSON
 def save_data(data):
     with open('data.json', 'w') as f:
-        json.dump(data, indent=2, fp=f)
+        json.dump(data, f, indent=2)
 
 # Story generation function
 def generate_story(pm_level, focus_words, theme, word_count):
     API_URL = "https://api.deepinfra.com/v1/openai/chat/completions"
-    API_KEY = os.getenv('DEEPINFRA_TOKEN')  # Set this in your environment
+    API_KEY = os.getenv('DEEPINFRA_TOKEN')  # Load API key from .env
     
     prompt = (
         f"Write a {word_count}-word story for a Level {pm_level} reader "
@@ -43,6 +52,9 @@ def generate_story(pm_level, focus_words, theme, word_count):
             "messages": [{"role": "user", "content": prompt}]
         }
     )
+     # DEBUG: Print API Response
+    print("DEBUG: API Response Status:", response.status_code)
+    print("DEBUG: API Response Content:", response.text)
     
     if response.status_code == 200:
         return response.json()['choices'][0]['message']['content']
@@ -58,6 +70,9 @@ def dashboard():
     student_name = request.form['username'].strip()
     data = load_data()
     
+    print("DEBUG: Loaded data =", data)
+    print("DEBUG: Type of data =", type(data))
+
     # Find or create student
     student = next((s for s in data['students'] if s['name'] == student_name), None)
     if not student:
